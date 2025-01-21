@@ -42,6 +42,8 @@ void loop() {
         SerialUSB.print('\t');
         SerialUSB.print(data->pressure);
         SerialUSB.print('\t');
+        SerialUSB.print(data->vibrations);
+        SerialUSB.print('\t');
         SerialUSB.print(data->acceleration[0], 6);
         SerialUSB.print('\t');
         SerialUSB.print(data->acceleration[1], 6);
