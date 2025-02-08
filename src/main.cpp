@@ -1,9 +1,12 @@
 #include <Arduino.h>
+
 #include <CanSatKit.h>
 #include <CanSatKitRadio.h>
+#include <SD.h>
+#include <ace_crc/crc32_nibble.hpp>
 
 #include "data.h"
-#include <ace_crc/crc32_nibble.hpp>
+#include "pins.h"
 
 CanSatKit::Radio radio( 7,
                         6,
@@ -11,6 +14,8 @@ CanSatKit::Radio radio( 7,
                         CanSatKit::Bandwidth_500000_Hz,
                         CanSatKit::SpreadingFactor_7,
                         CanSatKit::CodingRate_4_8);
+
+SDLib::File logFile;
 
 void setup() {
     SerialUSB.begin(115200);
@@ -22,6 +27,13 @@ void setup() {
             digitalWrite(PIN_LED, false);
             delay(1000);
         }
+    }
+
+    if (SD.begin(PIN_SD_SELECT)) {
+        logFile = SD.open("latest.log", O_APPEND | O_CREAT | O_WRITE);
+        logFile.print('\n');
+        logFile.println("--- STARTUP ---");
+        logFile.flush();
     }
 }
 
@@ -79,6 +91,45 @@ void loop() {
         SerialUSB.print('\t');
         SerialUSB.print(data->gpsAltitude, 6);
         SerialUSB.println();
+
+        logFile.print(data->index);
+        logFile.print('\t');
+        logFile.print(data->uptime);
+        logFile.print('\t');
+        logFile.print(data->micros);
+        logFile.print('\t');
+        logFile.print(data->temperature);
+        logFile.print('\t');
+        logFile.print(data->pressure);
+        logFile.print('\t');
+        logFile.print(data->vibrations);
+        logFile.print('\t');
+        logFile.print(data->acceleration[0], 6);
+        logFile.print('\t');
+        logFile.print(data->acceleration[1], 6);
+        logFile.print('\t');
+        logFile.print(data->acceleration[2], 6);
+        logFile.print('\t');
+        logFile.print(data->accelerationStatus);
+        logFile.print('\t');
+        logFile.print(data->gyroscope[0], 6);
+        logFile.print('\t');
+        logFile.print(data->gyroscope[1], 6);
+        logFile.print('\t');
+        logFile.print(data->gyroscope[2], 6);
+        logFile.print('\t');
+        logFile.print(data->gyroscopeStatus);
+        logFile.print('\t');
+        logFile.print(data->gpsDate);
+        logFile.print('\t');
+        logFile.print(data->gpsTime);
+        logFile.print('\t');
+        logFile.print(data->gpsLatitude, 6);
+        logFile.print('\t');
+        logFile.print(data->gpsLongitude, 6);
+        logFile.print('\t');
+        logFile.print(data->gpsAltitude, 6);
+        logFile.println();
     }
 
 }
