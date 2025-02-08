@@ -3,6 +3,7 @@
 #include <CanSatKitRadio.h>
 
 #include "data.h"
+#include <ace_crc/crc32_nibble.hpp>
 
 CanSatKit::Radio radio( 7,
                         6,
@@ -30,7 +31,15 @@ void loop() {
     radio.receive((char*) buffer);
     
     for (uint8_t i = 0; i < 2; i++) {
-        const SensedData* data = &buffer[i].data;
+        Frame* frame = &buffer[i];
+        if (frame->signature[0] != 'V'
+                || frame->signature[1] != 'L'
+                || frame->signature[2] != 'O'
+                || frame->checksum != ace_crc::crc32_nibble::crc_calculate(&frame->data, sizeof(SensedData))) {
+            continue;
+        }
+
+        const SensedData* data = &frame->data;
 
         SerialUSB.print(data->index);
         SerialUSB.print('\t');
