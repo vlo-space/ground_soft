@@ -44,7 +44,9 @@ void setup() {
 void loop() {
 
     Frame buffer[2] = {0};
+    digitalWrite(PIN_LED, true);
     radio.receive((char*) buffer);
+    digitalWrite(PIN_LED, false);
     
     for (uint8_t i = 0; i < 2; i++) {
         Frame* frame = &buffer[i];
@@ -57,83 +59,8 @@ void loop() {
 
         const SensedData* data = &frame->data;
 
-        SerialUSB.print(data->index);
-        SerialUSB.print('\t');
-        SerialUSB.print(data->uptime);
-        SerialUSB.print('\t');
-        SerialUSB.print(data->micros);
-        SerialUSB.print('\t');
-        SerialUSB.print(data->temperature);
-        SerialUSB.print('\t');
-        SerialUSB.print(data->pressure);
-        SerialUSB.print('\t');
-        SerialUSB.print(data->vibrations);
-        SerialUSB.print('\t');
-        SerialUSB.print(data->acceleration[0], 6);
-        SerialUSB.print('\t');
-        SerialUSB.print(data->acceleration[1], 6);
-        SerialUSB.print('\t');
-        SerialUSB.print(data->acceleration[2], 6);
-        SerialUSB.print('\t');
-        SerialUSB.print(data->accelerationStatus);
-        SerialUSB.print('\t');
-        SerialUSB.print(data->gyroscope[0], 6);
-        SerialUSB.print('\t');
-        SerialUSB.print(data->gyroscope[1], 6);
-        SerialUSB.print('\t');
-        SerialUSB.print(data->gyroscope[2], 6);
-        SerialUSB.print('\t');
-        SerialUSB.print(data->gyroscopeStatus);
-        SerialUSB.print('\t');
-        SerialUSB.print(data->gpsDate);
-        SerialUSB.print('\t');
-        SerialUSB.print(data->gpsTime);
-        SerialUSB.print('\t');
-        SerialUSB.print(data->gpsLatitude, 6);
-        SerialUSB.print('\t');
-        SerialUSB.print(data->gpsLongitude, 6);
-        SerialUSB.print('\t');
-        SerialUSB.print(data->gpsAltitude, 6);
-        SerialUSB.println();
-
-        logFile.print(data->index);
-        logFile.print('\t');
-        logFile.print(data->uptime);
-        logFile.print('\t');
-        logFile.print(data->micros);
-        logFile.print('\t');
-        logFile.print(data->temperature);
-        logFile.print('\t');
-        logFile.print(data->pressure);
-        logFile.print('\t');
-        logFile.print(data->vibrations);
-        logFile.print('\t');
-        logFile.print(data->acceleration[0], 6);
-        logFile.print('\t');
-        logFile.print(data->acceleration[1], 6);
-        logFile.print('\t');
-        logFile.print(data->acceleration[2], 6);
-        logFile.print('\t');
-        logFile.print(data->accelerationStatus);
-        logFile.print('\t');
-        logFile.print(data->gyroscope[0], 6);
-        logFile.print('\t');
-        logFile.print(data->gyroscope[1], 6);
-        logFile.print('\t');
-        logFile.print(data->gyroscope[2], 6);
-        logFile.print('\t');
-        logFile.print(data->gyroscopeStatus);
-        logFile.print('\t');
-        logFile.print(data->gpsDate);
-        logFile.print('\t');
-        logFile.print(data->gpsTime);
-        logFile.print('\t');
-        logFile.print(data->gpsLatitude, 6);
-        logFile.print('\t');
-        logFile.print(data->gpsLongitude, 6);
-        logFile.print('\t');
-        logFile.print(data->gpsAltitude, 6);
-        logFile.println();
+        data->print(&SerialUSB);
+        data->print(&logFile);
     }
 
     if (millis() - lastLogWrite > LOG_WRITE_INTERVAL) {
