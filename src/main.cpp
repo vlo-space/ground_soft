@@ -8,6 +8,8 @@
 #include "data.h"
 #include "pins.h"
 
+#define LOG_WRITE_INTERVAL 1000
+
 CanSatKit::Radio radio( 7,
                         6,
                         433.0,
@@ -16,6 +18,8 @@ CanSatKit::Radio radio( 7,
                         CanSatKit::CodingRate_4_8);
 
 SDLib::File logFile;
+
+uint32_t lastLogWrite = 0;
 
 void setup() {
     SerialUSB.begin(115200);
@@ -130,6 +134,11 @@ void loop() {
         logFile.print('\t');
         logFile.print(data->gpsAltitude, 6);
         logFile.println();
+    }
+
+    if (millis() - lastLogWrite > LOG_WRITE_INTERVAL) {
+        logFile.flush();
+        lastLogWrite = millis();
     }
 
 }
