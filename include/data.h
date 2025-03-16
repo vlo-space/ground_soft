@@ -1,8 +1,8 @@
 #ifndef H_CANSAT_SENSORS
 #define H_CANSAT_SENSORS
 
-#include <cstdint>
 #include <Arduino.h>
+#include <cstdint>
 
 struct __attribute__((packed)) SensedData {
     uint32_t index;
@@ -12,7 +12,6 @@ struct __attribute__((packed)) SensedData {
 
     float temperature;
     float pressure;
-    uint16_t vibrations;
 
     float acceleration[3];
     uint8_t accelerationStatus;
@@ -35,8 +34,6 @@ struct __attribute__((packed)) SensedData {
         output->print(this->temperature);
         output->print('\t');
         output->print(this->pressure);
-        output->print('\t');
-        output->print(this->vibrations);
         output->print('\t');
         output->print(this->acceleration[0], 6);
         output->print('\t');
@@ -71,6 +68,6 @@ struct __attribute__((packed)) Frame {
     uint32_t checksum;
 };
 
-static_assert (sizeof(Frame) < 85, "Radio frame too big");
+static_assert(sizeof(Frame) < 85, "Radio frame too big");
 
 #endif
